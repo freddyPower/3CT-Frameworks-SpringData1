@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:schemaLocation="hhttp://www.springframework.org/schema/tx"
+	xsi:schemaLocation="hhttp://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.8.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- Paquete donde se encuentran los repositorios -->
+	<jpa:repositories base-package="com.tresct.repository">
+
+	</jpa:repositories>
+
+	<!-- Parametros de la base de datos -->
+	<bean id="datasource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="url" value="jdbc:mysql://localhost:3306/test_bd">
+		</property>
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="cryp1915tum"></property>
+	</bean>
+
+	<!-- Gestor de entidades -->
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="datasource"></property>
+		<property name="packagesToScan" value="com.tresct.domain"></property>
+
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="database" value="MYSQL"></property>
+				<property name="generateDdl" value="true"></property>
+				<property name="showSql" value="true"></property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect">
+	</bean>
+
+	<!-- Habilitar anotaciones Spring -->
+	<context:annotation-config></context:annotation-config>
+	<context:component-scan base-package="com.tresct.service"></context:component-scan>
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+		<property name="datasource" ref="datasource"></property>
+		<property name="jpaDialect" ref="jpaDialect"></property>
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager" />
+</beans>
